@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  users.api:
+    image: thrberglund/petstore:latestUsers
+    ports:
+      - "64783:80"
+  orders.api:
+    image: thrberglund/petstore:latestOrders
+    ports:
+      - "64788:80"
