@@ -7,7 +7,7 @@ using Users.API.Models;
 
 namespace Users.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("user")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -18,32 +18,33 @@ namespace Users.API.Controllers
             _context = context;
         }
 
-        // GET: api/Users
+        /// <summary>
+        /// GET: users
+        /// 
+        /// Technically not part of the spec, but added it to make it easier to verify the result
+        /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
+        [Route("~/users")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers() {
             return await _context.Users.ToListAsync();
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(long id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
+        // GET: user/William
+        [HttpGet("{username}")]
+        public async Task<ActionResult<User>> GetUser(string username) {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null) {
                 return NotFound();
             }
 
             return user;
         }
 
-        // PUT: api/Users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(long id, User user)
+        // PUT: user/William
+        [HttpPut("{username}")]
+        public async Task<IActionResult> PutUser(string username, User user)
         {
-            if (id != user.Id)
+            if (username != user.Username)
             {
                 return BadRequest();
             }
@@ -56,7 +57,7 @@ namespace Users.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
+                if (!UserExists(username))
                 {
                     return NotFound();
                 }
@@ -69,21 +70,46 @@ namespace Users.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
+        // POST: user
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
+        public async Task<ActionResult<User>> PostUser(User user) {
+            //Db should probably be set up so that the username is unique,
+            //but since that's not supported by EF in-memory-db, I just handle/hack it by deleting existing user.
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == user.Username);
+            if (existingUser != null) {
+                _context.Users.Remove(existingUser);
+            }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUser), new { username = user.Username }, user);
         }
 
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(long id)
+        // POST: user/createWithArray or user/createWithList
+        [HttpPost]
+        [Route("createWithArray")]
+        [Route("createWithList")]
+        public async Task<ActionResult<List<User>>> PostUsers(List<User> users) {
+            //Db should probably be set up so that the username is unique,
+            //but since that's not supported by EF in-memory-db, I just handle/hack it by deleting existing user.
+            foreach (var user in users) {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == user.Username);
+                if (existingUser != null) {
+                    _context.Users.Remove(existingUser);
+                }
+            }
+            _context.Users.AddRange(users);
+            await _context.SaveChangesAsync();
+
+            //TODO: There might be a better way of handling this instead of directly returning the statuscode
+            return StatusCode(201, users);
+        }
+
+        // DELETE: user/William
+        [HttpDelete("{username}")]
+        public async Task<ActionResult<User>> DeleteUser(string username)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null)
             {
                 return NotFound();
@@ -95,9 +121,8 @@ namespace Users.API.Controllers
             return user;
         }
 
-        private bool UserExists(long id)
-        {
-            return _context.Users.Any(e => e.Id == id);
+        private bool UserExists(string userName) {
+            return _context.Users.Any(e => e.Username == userName);
         }
     }
 }

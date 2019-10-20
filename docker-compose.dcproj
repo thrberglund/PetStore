@@ -3,10 +3,10 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>2eea343f-20f3-411b-a351-c2e7f85a88b8</ProjectGuid>
+    <ProjectGuid>af8978a2-717f-4597-91aa-09dade7c2cdb</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/api/orders</DockerServiceUrl>
-    <DockerServiceName>orders.api</DockerServiceName>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/users</DockerServiceUrl>
+    <DockerServiceName>users.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
