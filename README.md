@@ -37,8 +37,10 @@ docker-compose -f docker-compose.simpletest.yml up
 ```
 
 If using the ports as above, you would then access the APIs from the following links:
+```
 Users	http://localhost:64783
 Orders	http://localhost:64788
+```
 
 ## API Endpoints
 Most endpoints for User and Order has been implemented as specified in https://petstore.swagger.io/. 
