@@ -4,7 +4,7 @@
 This is a demonstration of how to create APIs using a microservices architecture. The endpoints are taken from https://petstore.swagger.io/ and the APIs has been implemented as Web APIs. The implemented endpoints are working and you can use apps such as Postman to test them. Links to the Docker images has also been provided below to be able to run this without worrying about any dependencies.
 
 ## Implementation Details
-I implemented this in Visual Studio 2019 using **.NET Core 3.0.** and tested it with Postman. It has been done as one solution with two API projects, one for Orders and one for Users. I implemented most of the endpoints for Orders and Users as specified. Refer to the API Endpoints header for more details.
+I implemented this in Visual Studio 2019 using **.NET Core 3.0.** and tested it with Postman. It has been done as one solution with two API projects, one for Orders and one for Users. I implemented most of the endpoints for Orders and Users as specified in Swagger. Refer to the API Endpoints header for more details.
 
 To quickly get it up and running, I used Entity Framework Core and took advantage of their in-memory-database. The two projects are completely separated and have their own in-memory-database. Please note that this created some limitations as it's not a proper relational database and I couldn't change things like keys and indexes. With the user for example, where I assume the username is unique, I had to add some minor handling outside of the database to ensure this condition was satisfied.
 
